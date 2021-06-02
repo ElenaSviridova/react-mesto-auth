@@ -12,10 +12,10 @@ import { Route, Switch, useHistory} from 'react-router-dom';
 import Login from './Login.js';
 import Register from './Register.js';
 import ProtectedRoute from './ProtectedRoute'
-import * as auth from '../Auth.js';
+import * as auth from '../utils/auth.js';
 import InfoToolip from './InfoToolip';
-import sucsessIconPath from '../images/sucsess-icon.svg'
-import failIconPath from '../images/wrong-icon.svg'
+
+
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -126,7 +126,7 @@ function App() {
     function handleAddPlaceSubmit(card) {
         api.addCard(card)
         .then(newCard => {
-            setCards([...cards, newCard]);
+            setCards([newCard, ...cards]);
             closeAllPopups()
           })
           .catch(handleError)
@@ -183,14 +183,13 @@ function App() {
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}  />
+          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+          <InfoToolip onClose={closeModalPopup} isOpen={isModalPopupOpen} fail={fail}/>
           <Switch>        
           <ProtectedRoute exact path="/" loggedIn={loggedIn} component={Main} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} cards={cards} handleLogout={handleLogout} email={email}/>
           <Route path="/sign-up">
                 <Header email={""} handleHeaderClick={navigateToEnter} caption='Войти'/>
                 <Register handleRegister={handleRegister}/>
-                {fail ? <InfoToolip onClose={closeModalPopup} isOpen={isModalPopupOpen} pic={failIconPath} alt='иконка ошибки' infoToolipCaption='Что-то пошло не так!Попробуйте ещё раз.'/>
-                 : <InfoToolip onClose={closeModalPopup} isOpen={isModalPopupOpen} pic={sucsessIconPath} alt='иконка подтверждения' infoToolipCaption='Вы успешно зарегистрировались!'/>}
             </Route>
             <Route path="/sign-in"> 
                 <Header email={""} handleHeaderClick={navigateToRegister} caption='Регистрация'/> 
